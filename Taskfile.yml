@@ -9,18 +9,18 @@ tasks:
   run:
     desc: "Run the application"
     cmds:
+      - docker compose exec mosdns-dev pkill mosdns || true
       - docker compose up -d
       - docker compose exec --env CGO_ENABLED=0 mosdns-dev go build .
-      # - docker compose exec --env CGO_ENABLED=0 dhcp-manager-dev go build -o dhcp-manager main.go
-      # - docker compose exec dhcp-manager-dev pkill dhcp-manager || true
-      # - docker compose exec dhcp-manager-dev ssh root@192.168.100.101 rm -f /tmp/dhcp-manager || true
-      # - docker compose exec dhcp-manager-dev scp dhcp-manager root@192.168.100.101:/tmp
-      # - docker compose exec dhcp-manager-dev ssh root@192.168.100.101 /tmp/dhcp-manager
+      - docker compose exec mosdns-dev ssh root@192.168.100.101 rm -f /tmp/mosdns || true
+      - docker compose exec mosdns-dev scp mosdns root@192.168.100.101:/tmp
+      - docker compose exec mosdns-dev scp config.yaml root@192.168.100.101:/tmp
+      - docker compose exec mosdns-dev ssh root@192.168.100.101 /tmp/mosdns -c /tmp/config.yaml start
   
   # proto:
   #   desc: "Generate protobuf"
   #   cmds:
-  #     - docker compose exec dhcp-manager-dev protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./pkg/grpcgen/dhcp-manager.proto
+  #     - docker compose exec mosdns-dev protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./pkg/grpcgen/dhcp-manager.proto
 
   rebuild-dev-image:
     desc: "Rebuild the development image"
